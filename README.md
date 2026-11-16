@@ -241,7 +241,8 @@ Ensures incoming data adheres to business logic before persistence, automaticall
 
 ## 👤 Author & Academic Details
 
-- **Student / Developer:** Computer Applications Student
+- **Student / Developer:** JC Ree F. Redelosa - Computer Applications Student
+- **School:** Mindanao State University - Iligan Institute of Technology
 - **Course:** CCC181 (Applications Development and Emerging Technologies)
 - **Activity:** Activity No. 2 — Creating CRUD Modules in Laravel
 - **Term:** 1st Semester, A.Y. 2026–2027
