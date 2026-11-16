@@ -1,147 +1,209 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Product</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Edit Product') }}
+        </h2>
+    </x-slot>
 
-        h1 {
-            color: #f8fafc;
-            font-size: 1.6rem;
-            margin-bottom: 24px;
-        }
+    <div class="py-12">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
 
-        .container {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            padding: 32px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
-            margin: 0 auto;
-        }
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-200">
 
-        /* Form groups */
-        .form-group { margin-bottom: 18px; }
+                <div class="p-6">
 
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            font-size: 14px;
-            color: #cbd5e1;
-        }
+                    {{-- Success Message --}}
+                    @if (session('success'))
+                        <div class="mb-4 px-4 py-3 bg-green-100 border border-green-300 text-green-800 rounded-md">
+                            {{ session('success') }}
+                        </div>
+                    @endif
 
-        input[type=text],
-        input[type=number],
-        textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1.5px solid #334155;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            color: #f8fafc;
-            background-color: #0f172a;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            outline: none;
-        }
+                    {{-- Error Messages --}}
+                    @if ($errors->any())
+                        <div class="mb-4 px-4 py-3 bg-red-100 border border-red-300 text-red-800 rounded-md">
 
-        input[type=text]:focus,
-        input[type=number]:focus,
-        textarea:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-            background-color: #0f172a;
-        }
+                            <strong>Please fix the following errors:</strong>
 
-        textarea { height: 90px; resize: vertical; }
+                            <ul class="list-disc list-inside text-sm mt-2">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
 
-        /* Buttons */
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            font-family: inherit;
-            text-decoration: none;
-            transition: background 0.2s ease, transform 0.1s ease;
-        }
+                        </div>
+                    @endif
 
-        .btn:active { transform: scale(0.97); }
+                    {{-- Edit Product Form --}}
+                    <form action="{{ route('products.update', $product->id) }}"
+                          method="POST"
+                          enctype="multipart/form-data">
 
-        .btn-blue { background-color: #3b82f6; color: #ffffff; }
-        .btn-blue:hover { background-color: #2563eb; }
+                        @csrf
+                        @method('PUT')
 
-        .btn-gray { background-color: #64748b; color: #ffffff; margin-left: 10px; }
-        .btn-gray:hover { background-color: #475569; }
+                        {{-- Product Name --}}
+                        <div class="mb-4">
 
-        /* Validation errors */
-        .error {
-            background-color: #450a0a;
-            border-left: 4px solid #ef4444;
-            color: #fca5a5;
-            padding: 10px 14px;
-            border-radius: 6px;
-            font-size: 13px;
-            margin-bottom: 6px;
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <h1>Edit Product</h1>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
+                                Product Name
+                            </label>
 
-    {{-- Show validation errors if any --}}
-    @if($errors->any())
-        @foreach($errors->all() as $error)
-            <div class="error">• {{ $error }}</div>
-        @endforeach
-        <br>
-    @endif
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value="{{ old('name', $product->name) }}"
+                                maxlength="255"
+                                required
+                                class="block w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm"
+                            >
 
-    {{-- @method('PUT') tells Laravel this form should be treated as a PUT request --}}
-    <form action="{{ route('products.update', $product->id) }}" method="POST">
-        @csrf
-        @method('PUT')
+                        </div>
 
-        <div class="form-group">
-            <label for="name">Product Name</label>
-            <input type="text" id="name" name="name" value="{{ old('name', $product->name) }}">
+                        {{-- Quantity --}}
+                        <div class="mb-4">
+
+                            <label for="qty" class="block text-sm font-medium text-gray-700 mb-1">
+                                Quantity
+                            </label>
+
+                            <input
+                                type="number"
+                                id="qty"
+                                name="qty"
+                                value="{{ old('qty', $product->qty) }}"
+                                min="0"
+                                step="1"
+                                required
+                                class="block w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm"
+                            >
+
+                        </div>
+
+                        {{-- Price --}}
+                        <div class="mb-4">
+
+                            <label for="price" class="block text-sm font-medium text-gray-700 mb-1">
+                                Price
+                            </label>
+
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                id="price"
+                                name="price"
+                                value="{{ old('price', $product->price) }}"
+                                required
+                                class="block w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm"
+                            >
+
+                        </div>
+
+                        {{-- Description --}}
+                        <div class="mb-4">
+
+                            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
+                                Description
+                                <span class="text-gray-500 font-normal">(optional)</span>
+                            </label>
+
+                            <textarea
+                                id="description"
+                                name="description"
+                                rows="4"
+                                class="block w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm"
+                            >{{ old('description', $product->description) }}</textarea>
+
+                        </div>
+
+                        {{-- Current Product Image --}}
+                        <div class="mb-4">
+
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Current Product Image
+                            </label>
+
+                            @if ($product->image)
+
+                                <img
+                                    src="{{ asset('storage/' . $product->image) }}"
+                                    alt="{{ $product->name }}"
+                                    class="w-40 h-40 object-cover rounded-lg border border-gray-300 mb-3"
+                                >
+
+                            @else
+
+                                <div class="w-40 h-40 bg-gray-100 rounded-lg border border-gray-300 flex items-center justify-center mb-3">
+                                    <span class="text-sm text-gray-400">
+                                        No Image Available
+                                    </span>
+                                </div>
+
+                            @endif
+
+                        </div>
+
+                        {{-- Replace Product Image --}}
+                        <div class="mb-4">
+
+                            <label for="image" class="block text-sm font-medium text-gray-700 mb-1">
+                                Replace Product Image
+                                <span class="text-gray-500 font-normal">(optional)</span>
+                            </label>
+
+                            <input
+                                type="file"
+                                id="image"
+                                name="image"
+                                accept=".jpg,.jpeg,.png,.webp"
+                                class="block w-full text-sm text-gray-700 border border-gray-300 rounded-md cursor-pointer bg-white focus:outline-none"
+                            >
+
+                            <p class="mt-2 text-xs text-gray-500">
+                                Accepted formats: JPG, JPEG, PNG, and WebP.
+                                Maximum size: 2 MB.
+                            </p>
+
+                            <p class="mt-1 text-xs text-gray-500">
+                                Leave this field empty if you want to keep the current image.
+                            </p>
+
+                            @error('image')
+                                <p class="mt-2 text-sm text-red-600">
+                                    {{ $message }}
+                                </p>
+                            @enderror
+
+                        </div>
+
+                        {{-- Buttons --}}
+                        <div class="flex items-center gap-3 mt-6">
+
+                            <button
+                                type="submit"
+                                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                            >
+                                Update Product
+                            </button>
+
+                            <a
+                                href="{{ route('products.index') }}"
+                                class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition ease-in-out duration-150"
+                            >
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
         </div>
-
-        <div class="form-group">
-            <label for="qty">Quantity</label>
-            <input type="number" id="qty" name="qty" value="{{ old('qty', $product->qty) }}" min="0">
-        </div>
-
-        <div class="form-group">
-            <label for="price">Price</label>
-            <input type="number" id="price" name="price" value="{{ old('price', $product->price) }}" step="0.01" min="0">
-        </div>
-
-        <div class="form-group">
-            <label for="description">Description <span style="font-weight:normal;color:#94a3b8;">(optional)</span></label>
-            <textarea id="description" name="description">{{ old('description', $product->description) }}</textarea>
-        </div>
-
-        <button type="submit" class="btn btn-blue">Update Product</button>
-        <a href="{{ route('products.index') }}" class="btn btn-gray">Cancel</a>
-    </form>
-</div>
-</body>
-</html>
-
+    </div>
+</x-app-layout>

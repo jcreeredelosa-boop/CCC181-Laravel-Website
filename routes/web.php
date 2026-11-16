@@ -1,3 +1,4 @@
+
 <?php
 
 use App\Http\Controllers\ProductController;
@@ -14,18 +15,39 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
 
-    // Breeze profile routes
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Profile routes
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
 
-    // Product CRUD routes (plural URL + plural name)
-    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-    Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
-    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
-    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
-    Route::put('/products/{product}/update', [ProductController::class, 'update'])->name('products.update');
-    Route::delete('/products/{product}/destroy', [ProductController::class, 'destroy'])->name('products.destroy');
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
+
+    // All authenticated users can view products
+    Route::get('/products', [ProductController::class, 'index'])
+        ->name('products.index');
+
+});
+
+// Admin-only product management
+Route::middleware(['auth', 'admin'])->group(function () {
+
+    Route::get('/products/create', [ProductController::class, 'create'])
+        ->name('products.create');
+
+    Route::post('/products', [ProductController::class, 'store'])
+        ->name('products.store');
+
+    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])
+        ->name('products.edit');
+
+    Route::put('/products/{product}/update', [ProductController::class, 'update'])
+        ->name('products.update');
+
+    Route::delete('/products/{product}/destroy', [ProductController::class, 'destroy'])
+        ->name('products.destroy');
 
 });
 
